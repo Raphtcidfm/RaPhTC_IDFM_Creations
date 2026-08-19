@@ -28,3 +28,7 @@ Le compte défini dans `.env` devient automatiquement administrateur au premier 
 ## Mise en ligne
 
 Pour une vraie mise en ligne publique, utiliser HTTPS et un hébergeur Node.js. Pour plusieurs instances ou une forte fréquentation, remplacer `data/db.json` par une vraie base SQL et stocker les sessions côté serveur.
+
+
+### Images
+Depuis l’administration, une image peut être choisie directement depuis le PC (PNG, JPG, WEBP ou GIF, 5 Mo maximum). Elle est stockée dans les données de l’application sous forme de Data URL. Sur Render Free, le stockage local est éphémère : pour une conservation permanente des créations/images après les redéploiements, il faudra ensuite brancher un stockage persistant externe.

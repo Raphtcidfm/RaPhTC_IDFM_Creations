@@ -33,7 +33,7 @@ function ensureAdmin() {
 function cryptoRandom() { return require('crypto').randomBytes(12).toString('hex'); }
 ensureAdmin();
 
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: process.env.SESSION_SECRET || 'dev-secret-change-this',
@@ -96,9 +96,23 @@ app.get('/api/admin/requests', admin, (req,res) => res.json(db.requests.slice().
 
 app.post('/api/admin/items', admin, (req,res) => {
   const allowed = ['roblox-progress','roblox-done','omsi-progress','omsi-done'];
-  const { title, description, image, link, type } = req.body;
+  const { title, description, image, imageName, link, type } = req.body;
   if (!title || !description || !allowed.includes(type)) return res.status(400).json({ error: 'Titre, description et catégorie obligatoires.' });
-  const item = { id: cryptoRandom(), title: String(title).trim(), description: String(description).trim(), image: String(image || '').trim(), link: String(link || '').trim(), type, createdAt: new Date().toISOString(), author: req.user.pseudo };
+
+  let storedImage = '';
+  if (image) {
+    const value = String(image);
+    if (!/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(value)) {
+      return res.status(400).json({ error: 'Le fichier image doit être un PNG, JPG, WEBP ou GIF.' });
+    }
+    const base64 = value.split(',')[1] || '';
+    if (Buffer.byteLength(base64, 'base64') > 5 * 1024 * 1024) {
+      return res.status(400).json({ error: 'Image trop lourde : maximum 5 Mo.' });
+    }
+    storedImage = value;
+  }
+
+  const item = { id: cryptoRandom(), title: String(title).trim(), description: String(description).trim(), image: storedImage, imageName: String(imageName || '').trim(), link: String(link || '').trim(), type, createdAt: new Date().toISOString(), author: req.user.pseudo };
   db.items.push(item); saveDb(db); res.json(item);
 });
 app.delete('/api/admin/items/:id', admin, (req,res) => {

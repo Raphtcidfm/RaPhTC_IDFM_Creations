@@ -17,3 +17,5 @@ h1{letter-spacing:-.04em}h1 span{background:linear-gradient(90deg,#6fd7ff,#a78bf
 footer{background:rgba(3,9,18,.88);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.08)}
 .footer-right{display:flex;align-items:center;gap:18px}.credits{font-size:11px;color:#71839b}
 @media(max-width:800px){.brand{width:190px}.brand-logo{width:190px}.hero-logo-img{width:310px}.footer-right{gap:8px;flex-direction:column;align-items:flex-end}.credits{display:none}}
+
+.item-img img{width:100%;height:100%;object-fit:cover;display:block}.form-card small.muted{display:block;margin-top:-8px;margin-bottom:12px;font-size:.8rem}
