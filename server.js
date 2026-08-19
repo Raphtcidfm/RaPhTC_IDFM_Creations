@@ -19,19 +19,45 @@ function loadDb() {
 function saveDb(db) { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); }
 let db = loadDb();
 
-function ensureAdmin() {
-  const email = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
-  const password = process.env.ADMIN_PASSWORD || '';
-  if (!email || !password) return;
-  let admin = db.users.find(u => u.email === email);
-  if (!admin) {
-    admin = { id: cryptoRandom(), email, pseudo: process.env.ADMIN_PSEUDO || 'RaPhTC_IDFM', passwordHash: bcrypt.hashSync(password, 12), role: 'admin', createdAt: new Date().toISOString() };
-    db.users.push(admin); saveDb(db);
-    console.log(`Compte admin créé : ${email}`);
+function ensureAdmins() {
+  const accounts = [];
+  const first = {
+    email: process.env.ADMIN_EMAIL,
+    password: process.env.ADMIN_PASSWORD,
+    pseudo: process.env.ADMIN_PSEUDO
+  };
+  if (first.email && first.password) accounts.push(first);
+
+  for (let n = 2; n <= 20; n++) {
+    const email = process.env[`ADMIN${n}_EMAIL`];
+    const password = process.env[`ADMIN${n}_PASSWORD`];
+    const pseudo = process.env[`ADMIN${n}_PSEUDO`];
+    if (!email || !password) continue;
+    accounts.push({ email, password, pseudo });
   }
+
+  let changed = false;
+  for (const account of accounts) {
+    const email = String(account.email).trim().toLowerCase();
+    const password = String(account.password);
+    const pseudo = String(account.pseudo || email.split('@')[0] || 'Admin').trim();
+    if (!email || !password) continue;
+    let admin = db.users.find(u => u.email === email);
+    if (!admin) {
+      admin = { id: cryptoRandom(), email, pseudo, passwordHash: bcrypt.hashSync(password, 12), role: 'admin', createdAt: new Date().toISOString() };
+      db.users.push(admin);
+      changed = true;
+      console.log(`Compte admin créé : ${email}`);
+    } else if (admin.role !== 'admin') {
+      admin.role = 'admin';
+      changed = true;
+      console.log(`Compte promu admin : ${email}`);
+    }
+  }
+  if (changed) saveDb(db);
 }
 function cryptoRandom() { return require('crypto').randomBytes(12).toString('hex'); }
-ensureAdmin();
+ensureAdmins();
 
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
