@@ -103,7 +103,7 @@ app.post('/api/login', (req, res) => {
 });
 app.post('/api/logout', (req, res) => req.session.destroy(() => res.json({ ok: true })));
 
-app.get('/api/items', (req, res) => {
+app.get('/api/items', auth, (req, res) => {
   const type = req.query.type;
   let items = db.items.slice().sort((a,b) => b.createdAt.localeCompare(a.createdAt));
   if (type) items = items.filter(i => i.type === type);
