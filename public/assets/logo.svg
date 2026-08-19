@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#61c7ff"/><stop offset=".55" stop-color="#4ea1ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
+    <filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity=".35"/></filter>
+  </defs>
+  <g filter="url(#s)">
+    <rect x="18" y="18" width="204" height="204" rx="54" fill="#081425" stroke="url(#g)" stroke-width="7"/>
+    <path d="M57 91c0-25 17-42 43-42h42c28 0 47 17 47 43v62c0 12-10 22-22 22H79c-12 0-22-10-22-22V91Z" fill="url(#g)"/>
+    <rect x="73" y="69" width="101" height="58" rx="12" fill="#081425"/>
+    <rect x="82" y="78" width="38" height="39" rx="7" fill="#8ee6ff" opacity=".9"/><rect x="127" y="78" width="38" height="39" rx="7" fill="#c7b7ff" opacity=".9"/>
+    <rect x="60" y="132" width="137" height="14" rx="7" fill="#fff" opacity=".9"/>
+    <circle cx="90" cy="177" r="18" fill="#07101f"/><circle cx="90" cy="177" r="8" fill="#a7b7c8"/>
+    <circle cx="169" cy="177" r="18" fill="#07101f"/><circle cx="169" cy="177" r="8" fill="#a7b7c8"/>
+    <text x="38" y="45" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#fff" opacity=".8">IDFM</text>
+  </g>
+  <text x="255" y="108" font-family="Arial,sans-serif" font-size="62" font-weight="800" fill="#fff">RaPhTC</text>
+  <text x="255" y="165" font-family="Arial,sans-serif" font-size="45" font-weight="700" fill="url(#g)">IDFM CRÉATIONS</text>
+  <text x="257" y="196" font-family="Arial,sans-serif" font-size="15" letter-spacing="4" fill="#a9b8cc">OMSI 2 • ROBLOX • TRANSPORT</text>
+</svg>

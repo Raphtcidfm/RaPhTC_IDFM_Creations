@@ -1,0 +1,8 @@
+{
+  "name": "raphtc-idfm-creations",
+  "version": "1.0.0",
+  "description": "Site de créations OMSI 2 et Roblox de RaPhTC_IDFM",
+  "main": "server.js",
+  "scripts": {"start": "node server.js"},
+  "dependencies": {"express": "^5.1.0", "express-session": "^1.18.2", "dotenv": "^17.2.1", "bcryptjs": "^3.0.2"}
+}
