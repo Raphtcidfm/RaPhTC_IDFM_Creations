@@ -1,34 +1,28 @@
-# RaPhTC_IDFM Créations
+# RaPhTC_IDFM Créations — V7
 
-Site complet pour publier des créations **OMSI 2** et **Roblox**, avec comptes membres, demandes de repaint et panneau administrateur.
+## Nouveautés V7
+- Les créations, comptes et demandes sont stockés dans PostgreSQL au lieu de `data/db.json`.
+- Les créations survivent aux redéploiements du site.
+- Panel admin avec statistiques : comptes, admins, créations et demandes en attente.
+- Gestion des administrateurs : créer/promouvoir un admin, retirer le rôle admin et changer son mot de passe.
+- Modification d’une création existante sans la supprimer.
+- Ajout/suppression d’images pendant la modification.
+- Les détails d’une création restent compatibles avec la galerie V6.
+- Les sessions de connexion utilisent aussi PostgreSQL.
 
-## Installation
+## Installation sur Render
+1. Crée un **Render Postgres** dans la même région que ton Web Service.
+2. Dans le Postgres, copie son **Internal Database URL**.
+3. Dans ton Web Service > Environment, ajoute `DATABASE_URL` avec cette valeur.
+4. Garde `SESSION_SECRET` et tes variables `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_PSEUDO`.
+5. Tu peux ajouter `ADMIN2_EMAIL`, `ADMIN2_PASSWORD`, `ADMIN2_PSEUDO` etc., mais la V7 permet surtout de gérer les admins depuis le panel.
+6. Remplace les fichiers du dépôt par ceux de cette V7 **sans toucher au dossier `.git`**.
+7. Commit/push avec GitHub Desktop : `Installer V7`. Render fera le déploiement automatiquement.
 
-1. Installer Node.js 20+.
-2. Copier `.env.example` en `.env`.
-3. Modifier `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_PSEUDO` et `SESSION_SECRET`.
-4. Dans le dossier du projet : `npm install`
-5. Lancer : `npm start`
-6. Ouvrir `http://localhost:3000`
+## Important sur le stockage Render
+La V7 utilise PostgreSQL pour que les données ne dépendent plus du disque temporaire du Web Service. Les images sont enregistrées dans PostgreSQL.
 
-Le compte défini dans `.env` devient automatiquement administrateur au premier démarrage.
+Sur Render, le Postgres Free actuel est limité à 1 Go et expire après 30 jours. Pour conserver le site à long terme sans interruption de base, il faudra passer la base à un plan payant avant son expiration.
 
-## Fonctionnalités
-
-- Accueil décoré avec ambiance bus.
-- Logo RaPhTC_IDFM Créations en SVG/CSS, sans image externe obligatoire.
-- Inscription avec pseudo, e-mail et mot de passe.
-- Connexion/déconnexion avec session.
-- Catégories Roblox : Jeu en cours / Jeu terminé.
-- Catégories OMSI 2 : Repaints en cours / Repaints terminés / Demande de repaint.
-- Demandes de repaint réservées aux membres connectés.
-- Admin : ajouter/supprimer les créations et gérer le statut des demandes.
-- Lien Discord intégré.
-
-## Mise en ligne
-
-Pour une vraie mise en ligne publique, utiliser HTTPS et un hébergeur Node.js. Pour plusieurs instances ou une forte fréquentation, remplacer `data/db.json` par une vraie base SQL et stocker les sessions côté serveur.
-
-
-### Images
-Depuis l’administration, une image peut être choisie directement depuis le PC (PNG, JPG, WEBP ou GIF, 5 Mo maximum). Elle est stockée dans les données de l’application sous forme de Data URL. Sur Render Free, le stockage local est éphémère : pour une conservation permanente des créations/images après les redéploiements, il faudra ensuite brancher un stockage persistant externe.
+## Variables
+`DATABASE_URL` est obligatoire pour la V7. Ne mets jamais ton mot de passe PostgreSQL dans GitHub.
