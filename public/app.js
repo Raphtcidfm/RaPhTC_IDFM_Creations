@@ -2,7 +2,22 @@ let currentUser=null;
 const labels={'roblox-progress':'Roblox — Jeu en cours','roblox-done':'Roblox — Jeu terminé','omsi-progress':'OMSI 2 — Repaint en cours','omsi-done':'OMSI 2 — Repaint terminé'};
 const $=s=>document.querySelector(s); let detailItems=[]; let editingImages=[];
 async function api(url,options={}){const headers=options.body instanceof FormData?{...(options.headers||{})}:{'Content-Type':'application/json',...(options.headers||{})};const r=await fetch(url,{...options,headers});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Une erreur est survenue.');return data;}
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const p=document.getElementById(id);if(p)p.classList.add('active');if(id==='admin')loadAdmin();if(id==='demandes')loadMyRequests();window.scrollTo({top:0,behavior:'smooth'});}
+function showPage(id){
+  if((id==='roblox'||id==='omsi')&&!currentUser){
+    openAuth();
+    return;
+  }
+
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+  const p=document.getElementById(id);
+  if(p)p.classList.add('active');
+
+  if(id==='admin')loadAdmin();
+  if(id==='demandes')loadMyRequests();
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function openAuth(){ $('#authModal').classList.remove('hidden');switchAuth('login'); } function closeAuth(){ $('#authModal').classList.add('hidden'); }
 function switchAuth(type){$('#loginForm').classList.toggle('hidden',type!=='login');$('#registerForm').classList.toggle('hidden',type!=='register');$('#loginTab').classList.toggle('active',type==='login');$('#registerTab').classList.toggle('active',type==='register');$('#authMsg').textContent='';}
 function setMsg(el,text){el.textContent=text;} function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
