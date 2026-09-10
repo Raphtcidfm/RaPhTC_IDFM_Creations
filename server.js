@@ -112,7 +112,11 @@ function validateImages(images){
   if(total>40*1024*1024) return {ok:false,error:'La taille totale des images dépasse 40 Mo.'};
   return {ok:true,images:out};
 }
-
+app.get('/api/health', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://raphtcidfm.github.io');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.json({ ok: true });
+});
 app.get('/api/me',async(req,res)=>{ try{res.json({user:safeUser(await currentUser(req))});}catch(e){res.status(500).json({error:'Erreur serveur.'});} });
 app.post('/api/register',async(req,res)=>{ try{
   const email=String(req.body.email||'').trim().toLowerCase(), password=String(req.body.password||''), pseudo=String(req.body.pseudo||'').trim();
