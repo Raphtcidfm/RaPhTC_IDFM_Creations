@@ -330,7 +330,7 @@ app.get('/api/photos', async (req, res) => {
 });
 
 // Envoi d'une photo réservé aux administrateurs.
-app.post('/api/photos', auth, admin, async (req, res) => {
+app.post('/api/photos', auth, async (req, res) => {
   try {
     const description = String(req.body.description || '').trim();
     const checked = validatePhotoImage(req.body.image);
