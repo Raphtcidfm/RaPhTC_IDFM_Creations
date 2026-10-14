@@ -1,4 +1,4 @@
-```javascript
+
 let currentUser = null;
 
 const labels = {
@@ -919,4 +919,3 @@ $('#itemModal').addEventListener('click', e => {
     loadMyPhotos()
   ]);
 })();
-```
