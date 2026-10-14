@@ -203,6 +203,7 @@ function validatePhotoImage(value) {
   }
   return { ok: true, image };
 }
+<<<<<<< HEAD
 
 app.get('/api/health', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://raphtcidfm.github.io');
@@ -233,6 +234,55 @@ app.post('/api/register', async (req, res) => {
     console.error(e);
     if (e.code === '23505') return res.status(409).json({ error: 'Cet e-mail ou ce pseudo est déjà utilisé.' });
     res.status(500).json({ error: 'Impossible de créer le compte.' });
+=======
+app.get('/api/health', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://raphtcidfm.github.io');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.json({ ok: true });
+});
+app.get('/api/me',async(req,res)=>{ try{res.json({user:safeUser(await currentUser(req))});}catch(e){res.status(500).json({error:'Erreur serveur.'});} });
+app.post('/api/register',async(req,res)=>{ try{
+  const email=String(req.body.email||'').trim().toLowerCase(), password=String(req.body.password||''), pseudo=String(req.body.pseudo||'').trim();
+  if(!email||!password||!pseudo) return res.status(400).json({error:'Tous les champs sont obligatoires.'});
+  if(password.length<8) return res.status(400).json({error:'Le mot de passe doit contenir au moins 8 caractères.'});
+  if(pseudo.length<3) return res.status(400).json({error:'Le pseudo doit contenir au moins 3 caractères.'});
+  const dup=await pool.query('SELECT id FROM users WHERE email=$1 OR LOWER(pseudo)=LOWER($2)',[email,pseudo]);
+  if(dup.rowCount) return res.status(409).json({error:'Cet e-mail ou ce pseudo est déjà utilisé.'});
+  const user={id:id(),email,pseudo,passwordHash:bcrypt.hashSync(password,12)};
+  await pool.query('INSERT INTO users(id,email,pseudo,password_hash,role) VALUES($1,$2,$3,$4,\'member\')',[user.id,user.email,user.pseudo,user.passwordHash]);
+  req.session.userId=user.id; const r=await pool.query('SELECT * FROM users WHERE id=$1',[user.id]); res.json({user:safeUser(r.rows[0])});
+ }catch(e){console.error(e);res.status(500).json({error:'Impossible de créer le compte.'});} });
+app.post('/api/login',async(req,res)=>{ try{
+  const email=String(req.body.email||'').trim().toLowerCase(), r=await pool.query('SELECT * FROM users WHERE email=$1',[email]);
+  if(!r.rowCount||!bcrypt.compareSync(String(req.body.password||''),r.rows[0].password_hash)) return res.status(401).json({error:'E-mail ou mot de passe incorrect.'});
+  req.session.userId=r.rows[0].id; res.json({user:safeUser(r.rows[0])});
+ }catch(e){res.status(500).json({error:'Erreur de connexion.'});} });
+app.post('/api/logout',(req,res)=>req.session.destroy(()=>res.json({ok:true})));
+
+app.get('/api/items',async(req,res)=>{ try{
+  const q=req.query.type; const r=q?await pool.query('SELECT * FROM items WHERE type=$1 ORDER BY created_at DESC',[q]):await pool.query('SELECT * FROM items ORDER BY created_at DESC');
+  res.json(r.rows.map(mapItem));
+ }catch(e){console.error(e);res.status(500).json({error:'Impossible de charger les créations.'});} });
+app.post('/api/requests',auth,async(req,res)=>{ try{
+  const title=String(req.body.title||'').trim(), description=String(req.body.description||'').trim(); if(!title||!description)return res.status(400).json({error:'Titre et description obligatoires.'});
+  const r=await pool.query('INSERT INTO requests(id,title,description,author_id,author_pseudo) VALUES($1,$2,$3,$4,$5) RETURNING *',[id(),title,description,req.user.id,req.user.pseudo]); res.json(mapRequest(r.rows[0]));
+ }catch(e){res.status(500).json({error:'Impossible d’envoyer la demande.'});} });
+app.get('/api/my-requests',auth,async(req,res)=>{const r=await pool.query('SELECT * FROM requests WHERE author_id=$1 ORDER BY created_at DESC',[req.user.id]);res.json(r.rows.map(mapRequest));});
+
+app.get('/api/admin/stats',admin,async(req,res)=>{ const r=await pool.query(`SELECT (SELECT COUNT(*)::int FROM users) users,(SELECT COUNT(*)::int FROM users WHERE role='admin') admins,(SELECT COUNT(*)::int FROM items) items,(SELECT COUNT(*)::int FROM requests WHERE status='En attente') pending_requests`); res.json(r.rows[0]); });
+app.get('/api/admin/admins',admin,async(req,res)=>{const r=await pool.query("SELECT id,email,pseudo,role,created_at FROM users WHERE role='admin' ORDER BY created_at ASC");res.json(r.rows.map(mapUser));});
+app.get('/api/admin/users',admin,async(req,res)=>{const r=await pool.query("SELECT id,email,pseudo,role,created_at FROM users ORDER BY created_at DESC");res.json(r.rows.map(mapUser));});
+app.post('/api/admin/admins',admin,async(req,res)=>{ try{
+  const email=String(req.body.email||'').trim().toLowerCase(), pseudo=String(req.body.pseudo||'').trim(), password=String(req.body.password||'');
+  if(!email||!pseudo) return res.status(400).json({error:'E-mail et pseudo obligatoires.'});
+  if(password && password.length<8)return res.status(400).json({error:'Le mot de passe doit contenir au moins 8 caractères.'});
+  const byEmail=await pool.query('SELECT * FROM users WHERE email=$1',[email]);
+  if(byEmail.rowCount){
+    const u=byEmail.rows[0];
+    const pseudoTaken=await pool.query('SELECT id FROM users WHERE LOWER(pseudo)=LOWER($1) AND id<>$2',[pseudo,u.id]); if(pseudoTaken.rowCount)return res.status(409).json({error:'Ce pseudo est déjà utilisé.'});
+    await pool.query('UPDATE users SET role=\'admin\',pseudo=$1'+(password?',password_hash=$2':'')+' WHERE id=$'+(password?'3':'2'),password?[pseudo,bcrypt.hashSync(password,12),u.id]:[pseudo,u.id]);
+    const r=await pool.query('SELECT * FROM users WHERE id=$1',[u.id]); return res.json(mapUser(r.rows[0]));
+>>>>>>> 0972331199deefe24f6f7b326b9242f20d5dcdb8
   }
 });
 app.post('/api/login', async (req, res) => {
