@@ -1,5 +1,13 @@
 
 let currentUser = null;
+function refreshPhotoSubmitSection() {
+  const section = document.querySelector('#photoSubmitSection');
+
+  if (!section) return;
+
+  const isAdmin = currentUser?.role === 'admin';
+  section.classList.toggle('hidden', !isAdmin);
+}
 
 const labels = {
   'roblox-progress': 'Roblox — Jeu en cours',
@@ -884,6 +892,8 @@ function refreshAuth() {
 
     if (adminLink) adminLink.remove();
   }
+
+  refreshPhotoSubmitSection();
 }
 
 /* =========================
