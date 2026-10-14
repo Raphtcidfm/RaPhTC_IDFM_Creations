@@ -1,12 +1,11 @@
 
 let currentUser = null;
+
 function refreshPhotoSubmitSection() {
   const section = document.querySelector('#photoSubmitSection');
-
   if (!section) return;
 
-  const isAdmin = currentUser?.role === 'admin';
-  section.classList.toggle('hidden', !isAdmin);
+  section.classList.toggle('hidden', !currentUser);
 }
 
 const labels = {
