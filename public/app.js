@@ -368,11 +368,11 @@ async function submitPhoto(e) {
     return;
   }
 
-  if (file.size > 3 * 1024 * 1024) {
-    setMsg($('#photoMsg'), 'La photo dépasse la limite de 3 Mo.');
-    return;
-  }
-
+ if (file.size > 10 * 1024 * 1024) {
+  setMsg($('#photoMsg'), 'La photo dépasse la limite de 10 Mo.');
+  return;
+}
+  
   if (!description) {
     setMsg($('#photoMsg'), 'Ajoute une description à ta photo.');
     return;
