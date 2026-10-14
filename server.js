@@ -198,8 +198,8 @@ function validatePhotoImage(value) {
   }
   const payload = image.split(',')[1] || '';
   const bytes = Buffer.byteLength(payload, 'base64');
-  if (!bytes || bytes > 3 * 1024 * 1024) {
-    return { ok: false, error: 'La photo doit peser au maximum 3 Mo.' };
+  if (!bytes || bytes > 10 * 1024 * 1024) {
+  return { ok: false, error: 'La photo doit peser au maximum 10 Mo.' };
   }
   return { ok: true, image };
 }
